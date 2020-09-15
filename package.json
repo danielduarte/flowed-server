@@ -1,0 +1,66 @@
+{
+  "name": "flowed-server",
+  "version": "1.0.0",
+  "description": "Flowed Server",
+  "keywords": [
+    "loopback-application",
+    "loopback"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "engines": {
+    "node": ">=10.16"
+  },
+  "scripts": {
+    "build": "lb-tsc",
+    "build:watch": "lb-tsc --watch",
+    "lint": "npm run prettier:check && npm run eslint",
+    "lint:fix": "npm run eslint:fix && npm run prettier:fix",
+    "prettier:cli": "lb-prettier \"**/*.ts\" \"**/*.js\"",
+    "prettier:check": "npm run prettier:cli -- -l",
+    "prettier:fix": "npm run prettier:cli -- --write",
+    "eslint": "lb-eslint --report-unused-disable-directives .",
+    "eslint:fix": "npm run eslint -- --fix",
+    "pretest": "npm run clean && npm run build",
+    "test": "lb-mocha --allow-console-logs \"dist/__tests__\"",
+    "posttest": "npm run lint",
+    "test:dev": "lb-mocha --allow-console-logs dist/__tests__/**/*.js && npm run posttest",
+    "docker:build": "docker build -t flowed-server .",
+    "docker:run": "docker run -p 3000:3000 -d flowed-server",
+    "migrate": "node ./dist/migrate",
+    "openapi-spec": "node ./dist/openapi-spec",
+    "prestart": "npm run build",
+    "start": "node -r source-map-support/register .",
+    "clean": "lb-clean dist *.tsbuildinfo .eslintcache"
+  },
+  "repository": {
+    "type": "git"
+  },
+  "author": "",
+  "license": "",
+  "files": [
+    "README.md",
+    "dist",
+    "src",
+    "!*/__tests__"
+  ],
+  "dependencies": {
+    "@loopback/boot": "^2.4.0",
+    "@loopback/core": "^2.9.2",
+    "@loopback/repository": "^2.10.0",
+    "@loopback/rest": "^5.2.1",
+    "@loopback/rest-explorer": "^2.2.7",
+    "@loopback/service-proxy": "^2.3.5",
+    "loopback-connector-mongodb": "^5.3.0",
+    "tslib": "^2.0.0"
+  },
+  "devDependencies": {
+    "@loopback/build": "^6.1.1",
+    "source-map-support": "^0.5.19",
+    "@loopback/testlab": "^3.2.1",
+    "@types/node": "^10.17.27",
+    "@loopback/eslint-config": "^8.0.4",
+    "eslint": "^7.5.0",
+    "typescript": "~3.9.7"
+  }
+}
