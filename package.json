@@ -1,6 +1,6 @@
 {
   "name": "flowed-server",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Flowed Server",
   "keywords": [
     "loopback-application",
@@ -36,7 +36,7 @@
   "repository": {
     "type": "git"
   },
-  "author": "",
+  "author": "Daniel Duarte <danieldd.ar@gmail.com>",
   "license": "",
   "files": [
     "README.md",
@@ -45,22 +45,23 @@
     "!*/__tests__"
   ],
   "dependencies": {
-    "@loopback/boot": "^2.4.0",
-    "@loopback/core": "^2.9.2",
-    "@loopback/repository": "^2.10.0",
-    "@loopback/rest": "^5.2.1",
-    "@loopback/rest-explorer": "^2.2.7",
-    "@loopback/service-proxy": "^2.3.5",
+    "@loopback/boot": "^2.5.1",
+    "@loopback/core": "^2.9.5",
+    "@loopback/repository": "^2.11.2",
+    "@loopback/rest": "^6.2.0",
+    "@loopback/rest-explorer": "^2.2.10",
+    "@loopback/service-proxy": "^2.3.8",
+    "flowed": "^1.10.1",
     "loopback-connector-mongodb": "^5.3.0",
     "tslib": "^2.0.0"
   },
   "devDependencies": {
-    "@loopback/build": "^6.1.1",
+    "@loopback/build": "^6.2.2",
     "source-map-support": "^0.5.19",
-    "@loopback/testlab": "^3.2.1",
-    "@types/node": "^10.17.27",
-    "@loopback/eslint-config": "^8.0.4",
-    "eslint": "^7.5.0",
-    "typescript": "~3.9.7"
+    "@loopback/testlab": "^3.2.4",
+    "@types/node": "^10.17.28",
+    "@loopback/eslint-config": "^9.0.2",
+    "eslint": "^7.7.0",
+    "typescript": "~4.0.2"
   }
 }

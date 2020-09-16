@@ -15,14 +15,14 @@ import {
   put,
   del,
   requestBody,
+  HttpErrors,
 } from '@loopback/rest';
 import {Flow} from '../models';
 import {FlowRepository} from '../repositories';
 
 export class FlowController {
   constructor(
-    @repository(FlowRepository)
-    public flowRepository: FlowRepository,
+    @repository(FlowRepository) public flowRepository: FlowRepository,
   ) {}
 
   @post('/flows', {
@@ -31,21 +31,32 @@ export class FlowController {
         description: 'Flow model instance',
         content: {'application/json': {schema: getModelSchemaRef(Flow)}},
       },
+      '409': {
+        description: 'Flow model conflict error',
+      },
     },
   })
   async create(
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Flow, {
-            title: 'NewFlow',
-          }),
+          schema: getModelSchemaRef(Flow, {title: 'NewFlow'}),
         },
       },
     })
     flow: Flow,
+    @param.query.boolean('upsert') upsert = false,
   ): Promise<Flow> {
-    return this.flowRepository.create(flow);
+    try {
+      return await this.flowRepository[upsert ? 'upsert' : 'create'](flow);
+    } catch (err) {
+      if (err.code === 11000 && err.name === 'MongoError') {
+        throw new HttpErrors.Conflict(
+          `Flow with id '${flow.id}' already exists.`,
+        );
+      }
+      throw err;
+    }
   }
 
   @get('/flows/count', {
