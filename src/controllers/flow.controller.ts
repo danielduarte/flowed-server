@@ -1,29 +1,10 @@
-import {
-  Count,
-  CountSchema,
-  Filter,
-  FilterExcludingWhere,
-  repository,
-  Where,
-} from '@loopback/repository';
-import {
-  post,
-  param,
-  get,
-  getModelSchemaRef,
-  patch,
-  put,
-  del,
-  requestBody,
-  HttpErrors,
-} from '@loopback/rest';
+import {Count, CountSchema, Filter, FilterExcludingWhere, repository, Where} from '@loopback/repository';
+import {post, param, get, getModelSchemaRef, patch, put, del, requestBody, HttpErrors} from '@loopback/rest';
 import {Flow} from '../models';
 import {FlowRepository} from '../repositories';
 
 export class FlowController {
-  constructor(
-    @repository(FlowRepository) public flowRepository: FlowRepository,
-  ) {}
+  constructor(@repository(FlowRepository) public flowRepository: FlowRepository) {}
 
   @post('/flows', {
     responses: {
@@ -51,9 +32,7 @@ export class FlowController {
       return await this.flowRepository[upsert ? 'upsert' : 'create'](flow);
     } catch (err) {
       if (err.code === 11000 && err.name === 'MongoError') {
-        throw new HttpErrors.Conflict(
-          `Flow with id '${flow.id}' already exists.`,
-        );
+        throw new HttpErrors.Conflict(`Flow with id '${flow.id}' already exists.`);
       }
       throw err;
     }
@@ -159,10 +138,7 @@ export class FlowController {
       },
     },
   })
-  async replaceById(
-    @param.path.string('id') id: string,
-    @requestBody() flow: Flow,
-  ): Promise<void> {
+  async replaceById(@param.path.string('id') id: string, @requestBody() flow: Flow): Promise<void> {
     await this.flowRepository.replaceById(id, flow);
   }
 

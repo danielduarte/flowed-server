@@ -1,29 +1,10 @@
-import {
-  Count,
-  CountSchema,
-  Filter,
-  FilterExcludingWhere,
-  repository,
-  Where,
-} from '@loopback/repository';
-import {
-  post,
-  param,
-  get,
-  getModelSchemaRef,
-  patch,
-  put,
-  del,
-  requestBody,
-} from '@loopback/rest';
+import {Count, CountSchema, Filter, FilterExcludingWhere, repository, Where} from '@loopback/repository';
+import {post, param, get, getModelSchemaRef, patch, put, del, requestBody} from '@loopback/rest';
 import {Instance} from '../models';
 import {InstanceRepository} from '../repositories';
 
 export class InstanceController {
-  constructor(
-    @repository(InstanceRepository)
-    public instanceRepository: InstanceRepository,
-  ) {}
+  constructor(@repository(InstanceRepository) public instanceRepository: InstanceRepository) {}
 
   @post('/instances', {
     responses: {
@@ -76,9 +57,7 @@ export class InstanceController {
       },
     },
   })
-  async find(
-    @param.filter(Instance) filter?: Filter<Instance>,
-  ): Promise<Instance[]> {
+  async find(@param.filter(Instance) filter?: Filter<Instance>): Promise<Instance[]> {
     return this.instanceRepository.find(filter);
   }
 
@@ -152,10 +131,7 @@ export class InstanceController {
       },
     },
   })
-  async replaceById(
-    @param.path.string('id') id: string,
-    @requestBody() instance: Instance,
-  ): Promise<void> {
+  async replaceById(@param.path.string('id') id: string, @requestBody() instance: Instance): Promise<void> {
     await this.instanceRepository.replaceById(id, instance);
   }
 

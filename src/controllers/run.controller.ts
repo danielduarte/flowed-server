@@ -1,18 +1,13 @@
 import {AnyObject, repository} from '@loopback/repository';
-import {
-  post,
-  getModelSchemaRef,
-  param,
-  requestBody,
-  HttpErrors,
-} from '@loopback/rest';
-import {FlowRepository} from '../repositories';
-import {Flow} from '../models';
+import {post, getModelSchemaRef, param, requestBody, HttpErrors} from '@loopback/rest';
+import {FlowRepository, InstanceRepository} from '../repositories';
+import {Flow, Instance} from '../models';
 import {FlowManager, ValueMap} from 'flowed';
 
 export class RunController {
   constructor(
     @repository(FlowRepository) public flowRepository: FlowRepository,
+    @repository(InstanceRepository) public instanceRepository: InstanceRepository,
   ) {}
 
   @post('/start/{id}', {
@@ -33,13 +28,30 @@ export class RunController {
     executionParams: AnyObject,
   ): Promise<ValueMap> {
     const flow = await this.flowRepository.findById(id);
+
+    const instanceInfo = new Instance({
+      versionId: flow.activeVersion,
+      params: executionParams.params,
+      expectedResults: executionParams.expectedResults,
+    });
+
+    const newInstance = await this.instanceRepository.create(instanceInfo);
+
     try {
-      return await FlowManager.run(
-        flow.spec,
-        executionParams.params,
-        executionParams.expectedResults,
-      );
+      const results = await FlowManager.run(flow.spec, executionParams.params, executionParams.expectedResults);
+
+      await this.instanceRepository.updateById(newInstance.id, {
+        state: 'finished',
+        finishedCond: 'ok',
+      });
+
+      return results;
     } catch (err) {
+      await this.instanceRepository.updateById(newInstance.id, {
+        state: 'finished',
+        finishedCond: 'error',
+      });
+
       throw new HttpErrors.BadRequest(err.message);
     }
   }

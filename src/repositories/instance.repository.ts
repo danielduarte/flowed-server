@@ -8,9 +8,7 @@ export class InstanceRepository extends DefaultCrudRepository<
   typeof Instance.prototype.id,
   InstanceRelations
 > {
-  constructor(
-    @inject('datasources.Instances') dataSource: InstancesDataSource,
-  ) {
+  constructor(@inject('datasources.Instances') dataSource: InstancesDataSource) {
     super(Instance, dataSource);
   }
 }

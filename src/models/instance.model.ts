@@ -11,6 +11,7 @@ export class Instance extends Entity {
 
   @property({
     type: 'date',
+    default: '$now',
   })
   createdAt?: string;
 
@@ -36,6 +37,7 @@ export class Instance extends Entity {
 
   @property({
     type: 'string',
+    default: 'ready',
   })
   state?: string;
 

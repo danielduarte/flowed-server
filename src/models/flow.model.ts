@@ -12,6 +12,7 @@ export class Flow extends Entity {
 
   @property({
     type: 'date',
+    default: '$now',
   })
   createdAt: Date;
 
@@ -43,6 +44,7 @@ export class Flow extends Entity {
 
   @property({
     type: 'string',
+    default: 'disabled',
   })
   status: string;
 
