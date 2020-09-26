@@ -1,8 +1,12 @@
 import {ApplicationConfig, FlowedServerApplication} from './application';
+import {FlowManager, FlowedPlugin} from 'flowed';
+import FlowedOpenApi from 'flowed-openapi';
 
 export * from './application';
 
 export async function main(options: ApplicationConfig = {}) {
+  FlowManager.installPlugin(FlowedOpenApi as FlowedPlugin);
+
   const app = new FlowedServerApplication(options);
   await app.boot();
   await app.start();

@@ -1,5 +1,11 @@
-import {repository} from '@loopback/repository';
-import {post, getModelSchemaRef, param} from '@loopback/rest';
+import {AnyObject, repository} from '@loopback/repository';
+import {
+  post,
+  getModelSchemaRef,
+  param,
+  requestBody,
+  HttpErrors,
+} from '@loopback/rest';
 import {FlowRepository} from '../repositories';
 import {Flow} from '../models';
 import {FlowManager, ValueMap} from 'flowed';
@@ -17,8 +23,24 @@ export class RunController {
       },
     },
   })
-  async start(@param.path.string('id') id: string): Promise<ValueMap> {
+  async start(
+    @param.path.string('id') id: string,
+    @requestBody({
+      content: {
+        'application/json': {},
+      },
+    })
+    executionParams: AnyObject,
+  ): Promise<ValueMap> {
     const flow = await this.flowRepository.findById(id);
-    return FlowManager.run(flow.spec);
+    try {
+      return await FlowManager.run(
+        flow.spec,
+        executionParams.params,
+        executionParams.expectedResults,
+      );
+    } catch (err) {
+      throw new HttpErrors.BadRequest(err.message);
+    }
   }
 }

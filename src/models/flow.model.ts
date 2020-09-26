@@ -1,4 +1,4 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, model, property, AnyObject} from '@loopback/repository';
 
 @model({settings: {strict: false}})
 export class Flow extends Entity {
@@ -11,16 +11,51 @@ export class Flow extends Entity {
   id: string;
 
   @property({
+    type: 'date',
+  })
+  createdAt: Date;
+
+  @property({
+    type: 'date',
+  })
+  updatedAt: Date;
+
+  @property({
+    type: 'string',
+  })
+  notes: string;
+
+  // Indexer property to allow additional data
+  @property({
+    type: 'object',
+  })
+  extra: AnyObject;
+
+  @property({
+    type: 'string',
+  })
+  title: string;
+
+  @property({
+    type: 'string',
+  })
+  description: string;
+
+  @property({
+    type: 'string',
+  })
+  status: string;
+
+  @property({
+    type: 'string',
+  })
+  activeVersion: string;
+
+  @property({
     type: 'object',
     required: true,
   })
   spec: object;
-
-  // Define well-known properties here
-
-  // Indexer property to allow additional data
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [prop: string]: any;
 
   constructor(data?: Partial<Flow>) {
     super(data);
