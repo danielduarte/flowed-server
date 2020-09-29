@@ -1,11 +1,15 @@
 import {ApplicationConfig, FlowedServerApplication} from './application';
 import {FlowManager, FlowedPlugin} from 'flowed';
 import FlowedOpenApi from 'flowed-openapi';
+import FlowedServerLogger from './services/flowed-server-logger';
+import {LogEntryRepository} from './repositories';
+import {LogEntryDataSource} from './datasources';
 
 export * from './application';
 
 export async function main(options: ApplicationConfig = {}) {
   FlowManager.installPlugin(FlowedOpenApi as FlowedPlugin);
+  FlowManager.installLogger(new FlowedServerLogger(new LogEntryRepository(new LogEntryDataSource())));
 
   const app = new FlowedServerApplication(options);
   await app.boot();

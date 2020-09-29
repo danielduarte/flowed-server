@@ -38,11 +38,19 @@ export class RunController {
     const newInstance = await this.instanceRepository.create(instanceInfo);
 
     try {
-      const results = await FlowManager.run(flow.spec, executionParams.params, executionParams.expectedResults);
+      const results = await FlowManager.run(
+        flow.spec,
+        executionParams.params,
+        executionParams.expectedResults,
+        undefined,
+        undefined,
+        {instanceId: newInstance.id},
+      );
 
       await this.instanceRepository.updateById(newInstance.id, {
         state: 'finished',
         finishedCond: 'ok',
+        extra: {...newInstance.extra, results},
       });
 
       return results;

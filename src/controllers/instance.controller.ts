@@ -1,10 +1,13 @@
-import {Count, CountSchema, Filter, FilterExcludingWhere, repository, Where} from '@loopback/repository';
+import {AnyObject, Count, CountSchema, Filter, FilterExcludingWhere, repository, Where} from '@loopback/repository';
 import {post, param, get, getModelSchemaRef, patch, put, del, requestBody} from '@loopback/rest';
-import {Instance} from '../models';
-import {InstanceRepository} from '../repositories';
+import {Instance, LogEntry} from '../models';
+import {InstanceRepository, LogEntryRepository} from '../repositories';
 
 export class InstanceController {
-  constructor(@repository(InstanceRepository) public instanceRepository: InstanceRepository) {}
+  constructor(
+    @repository(InstanceRepository) public instanceRepository: InstanceRepository,
+    @repository(LogEntryRepository) public logEntryRepository: LogEntryRepository,
+  ) {}
 
   @post('/instances', {
     responses: {
@@ -80,6 +83,7 @@ export class InstanceController {
     instance: Instance,
     @param.where(Instance) where?: Where<Instance>,
   ): Promise<Count> {
+    instance.updatedAt = new Date();
     return this.instanceRepository.updateAll(instance, where);
   }
 
@@ -121,6 +125,7 @@ export class InstanceController {
     })
     instance: Instance,
   ): Promise<void> {
+    instance.updatedAt = new Date();
     await this.instanceRepository.updateById(id, instance);
   }
 
@@ -132,6 +137,7 @@ export class InstanceController {
     },
   })
   async replaceById(@param.path.string('id') id: string, @requestBody() instance: Instance): Promise<void> {
+    instance.updatedAt = new Date();
     await this.instanceRepository.replaceById(id, instance);
   }
 
@@ -144,5 +150,67 @@ export class InstanceController {
   })
   async deleteById(@param.path.string('id') id: string): Promise<void> {
     await this.instanceRepository.deleteById(id);
+  }
+
+  @get('/instances/{id}/log', {
+    responses: {
+      '200': {
+        description: 'Array of Instance model instances',
+        content: {
+          'application/json': {
+            schema: {
+              type: 'array',
+              items: getModelSchemaRef(Instance, {includeRelations: true}),
+            },
+          },
+        },
+      },
+    },
+  })
+  async getInstanceLog(@param.path.string('id') id: string): Promise<LogEntry[]> {
+    return this.logEntryRepository.find({where: {objectId: id}});
+  }
+
+  @get('/instances/{id}/gantt', {
+    responses: {
+      '200': {
+        description: 'Log Gantt data',
+      },
+    },
+  })
+  async getInstanceGantt(@param.path.string('id') id: string): Promise<AnyObject[]> {
+    const log = await this.logEntryRepository.find({
+      fields: {
+        timestamp: true,
+        eventType: true,
+        extra: true,
+      },
+      where: {
+        objectId: id,
+        eventType: { inq: [ 'Task.Started', 'Task.Finished' ]}
+      }
+    } as Filter<LogEntry>);
+
+    const eventsByPid: AnyObject = {};
+    for (const entry of log) {
+      const pid = (entry?.extra as AnyObject)?.pid;
+      if (!eventsByPid.hasOwnProperty(pid)) {
+        eventsByPid[pid] = {};
+      }
+      eventsByPid[pid][entry.eventType as string] = entry;
+    }
+
+    const gantt = Object.entries(eventsByPid).map(([pid, data]) => [
+      pid,
+      data['Task.Started'].extra?.task?.code,
+      data['Task.Started'].extra?.task?.type,
+      data['Task.Started'].timestamp,
+      data['Task.Finished'].timestamp,
+      null,
+      100,
+      null,
+    ]);
+
+    return gantt as unknown as AnyObject[];
   }
 }

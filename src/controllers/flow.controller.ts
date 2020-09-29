@@ -88,6 +88,7 @@ export class FlowController {
     flow: Flow,
     @param.where(Flow) where?: Where<Flow>,
   ): Promise<Count> {
+    flow.updatedAt = new Date();
     return this.flowRepository.updateAll(flow, where);
   }
 
@@ -128,6 +129,7 @@ export class FlowController {
     })
     flow: Flow,
   ): Promise<void> {
+    flow.updatedAt = new Date();
     await this.flowRepository.updateById(id, flow);
   }
 
@@ -139,6 +141,7 @@ export class FlowController {
     },
   })
   async replaceById(@param.path.string('id') id: string, @requestBody() flow: Flow): Promise<void> {
+    flow.updatedAt = new Date();
     await this.flowRepository.replaceById(id, flow);
   }
 

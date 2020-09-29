@@ -1,7 +1,7 @@
 import {Entity, model, property} from '@loopback/repository';
 
 @model()
-export class Instance extends Entity {
+export class LogEntry extends Entity {
   @property({
     type: 'string',
     id: true,
@@ -13,62 +13,48 @@ export class Instance extends Entity {
     type: 'date',
     default: '$now',
   })
-  createdAt: Date;
+  timestamp: Date;
 
   @property({
-    type: 'date',
+    type: 'string',
+    default: 'info',
   })
-  updatedAt: Date;
+  level?: string;
+
+  @property({
+    type: 'string',
+    default: 'general',
+  })
+  eventType?: string;
 
   @property({
     type: 'string',
   })
-  notes?: string;
+  message?: string;
+
+  @property({
+    type: 'string',
+  })
+  objectId?: string;
+
+  @property({
+    type: 'array',
+    itemType: 'string',
+  })
+  tags?: string[];
 
   @property({
     type: 'object',
   })
   extra?: object;
 
-  @property({
-    type: 'string',
-  })
-  versionId?: string;
-
-  @property({
-    type: 'string',
-    default: 'ready',
-  })
-  state?: string;
-
-  @property({
-    type: 'string',
-  })
-  finishedCond?: string;
-
-  @property({
-    type: 'object',
-  })
-  params?: object;
-
-  @property({
-    type: 'array',
-    itemType: 'string',
-  })
-  expectedResults?: string[];
-
-  @property({
-    type: 'object',
-  })
-  resolvers?: object;
-
-  constructor(data?: Partial<Instance>) {
+  constructor(data?: Partial<LogEntry>) {
     super(data);
   }
 }
 
-export interface InstanceRelations {
+export interface LogEntryRelations {
   // describe navigational properties here
 }
 
-export type InstanceWithRelations = Instance & InstanceRelations;
+export type LogEntryWithRelations = LogEntry & LogEntryRelations;
