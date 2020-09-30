@@ -32,8 +32,9 @@ export class Instance extends Entity {
 
   @property({
     type: 'string',
+    required: true,
   })
-  versionId?: string;
+  versionId: string;
 
   @property({
     type: 'string',

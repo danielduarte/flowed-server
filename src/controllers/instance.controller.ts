@@ -187,14 +187,14 @@ export class InstanceController {
       },
       where: {
         objectId: id,
-        eventType: { inq: [ 'Task.Started', 'Task.Finished' ]}
-      }
+        eventType: {inq: ['Task.Started', 'Task.Finished']},
+      },
     } as Filter<LogEntry>);
 
     const eventsByPid: AnyObject = {};
     for (const entry of log) {
       const pid = (entry?.extra as AnyObject)?.pid;
-      if (!eventsByPid.hasOwnProperty(pid)) {
+      if (!Object.prototype.hasOwnProperty.call(eventsByPid, pid)) {
         eventsByPid[pid] = {};
       }
       eventsByPid[pid][entry.eventType as string] = entry;
@@ -211,6 +211,6 @@ export class InstanceController {
       null,
     ]);
 
-    return gantt as unknown as AnyObject[];
+    return (gantt as unknown) as AnyObject[];
   }
 }

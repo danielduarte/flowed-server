@@ -1,10 +1,13 @@
-import {Count, CountSchema, Filter, FilterExcludingWhere, repository, Where} from '@loopback/repository';
+import {AnyObject, Count, CountSchema, Filter, FilterExcludingWhere, repository, Where} from '@loopback/repository';
 import {post, param, get, getModelSchemaRef, patch, put, del, requestBody, HttpErrors} from '@loopback/rest';
 import {Flow} from '../models';
-import {FlowRepository} from '../repositories';
+import {FlowRepository, InstanceRepository} from '../repositories';
 
 export class FlowController {
-  constructor(@repository(FlowRepository) public flowRepository: FlowRepository) {}
+  constructor(
+    @repository(FlowRepository) public flowRepository: FlowRepository,
+    @repository(InstanceRepository) public instanceRepository: InstanceRepository,
+  ) {}
 
   @post('/flows', {
     responses: {
@@ -66,7 +69,19 @@ export class FlowController {
     },
   })
   async find(@param.filter(Flow) filter?: Filter<Flow>): Promise<Flow[]> {
-    return this.flowRepository.find(filter);
+    const instanceCounts = await this.instanceRepository.countByFlow();
+
+    const countByFlow = instanceCounts.reduce((acc: AnyObject, count: AnyObject) => {
+      acc[count.flowId] = count.count;
+      return acc;
+    }, {});
+
+    const flows = await this.flowRepository.find(filter);
+    flows.forEach(flow => {
+      (flow as AnyObject).totalInstances = countByFlow[flow.id];
+    });
+
+    return flows;
   }
 
   @patch('/flows', {
@@ -129,7 +144,7 @@ export class FlowController {
     })
     flow: Flow,
   ): Promise<void> {
-    flow.updatedAt = new Date();
+
     await this.flowRepository.updateById(id, flow);
   }
 
@@ -141,7 +156,6 @@ export class FlowController {
     },
   })
   async replaceById(@param.path.string('id') id: string, @requestBody() flow: Flow): Promise<void> {
-    flow.updatedAt = new Date();
     await this.flowRepository.replaceById(id, flow);
   }
 
@@ -154,5 +168,7 @@ export class FlowController {
   })
   async deleteById(@param.path.string('id') id: string): Promise<void> {
     await this.flowRepository.deleteById(id);
+    // @todo delete versions: cascade? restrict?
+    // @todo delete instances: cascade? restrict?
   }
 }

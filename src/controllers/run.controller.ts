@@ -29,6 +29,10 @@ export class RunController {
   ): Promise<ValueMap> {
     const flow = await this.flowRepository.findById(id);
 
+    if (flow.status !== 'enabled') {
+      throw new HttpErrors.Conflict(`Flow with id '${flow.id}' cannot be executed because it is not enabled.`);
+    }
+
     const instanceInfo = new Instance({
       versionId: flow.activeVersion,
       params: executionParams.params,
@@ -39,7 +43,7 @@ export class RunController {
 
     try {
       const results = await FlowManager.run(
-        flow.spec,
+        flow.spec || {},
         executionParams.params,
         executionParams.expectedResults,
         undefined,

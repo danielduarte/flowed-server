@@ -1,14 +1,13 @@
-import {Entity, model, property, AnyObject} from '@loopback/repository';
+import {AnyObject, Entity, model, property} from '@loopback/repository';
 
-@model({settings: {strict: false}})
-export class Flow extends Entity {
+@model()
+export class FlowVersion extends Entity {
   @property({
     type: 'string',
     id: true,
-    generated: false,
-    required: true,
+    generated: true,
   })
-  id: string;
+  id?: string;
 
   @property({
     type: 'date',
@@ -35,12 +34,12 @@ export class Flow extends Entity {
   @property({
     type: 'string',
   })
-  title: string;
+  name: string;
 
   @property({
-    type: 'string',
+    type: 'number',
   })
-  description: string;
+  inc?: number;
 
   @property({
     type: 'string',
@@ -49,22 +48,24 @@ export class Flow extends Entity {
   status: string;
 
   @property({
-    type: 'string',
+    type: 'object',
+    required: true,
   })
-  activeVersion: string;
+  spec: object;
 
   @property({
-    type: 'object',
+    type: 'string',
+    required: true,
   })
-  spec?: object;
+  flowId: string;
 
-  constructor(data?: Partial<Flow>) {
+  constructor(data?: Partial<FlowVersion>) {
     super(data);
   }
 }
 
-export interface FlowRelations {
+export interface FlowVersionRelations {
   // describe navigational properties here
 }
 
-export type FlowWithRelations = Flow & FlowRelations;
+export type FlowVersionWithRelations = FlowVersion & FlowVersionRelations;
