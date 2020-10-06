@@ -32,6 +32,7 @@ export class FlowController {
     @param.query.boolean('upsert') upsert = false,
   ): Promise<Flow> {
     try {
+      // @todo manage versions on 'create'
       return await this.flowRepository[upsert ? 'upsert' : 'create'](flow);
     } catch (err) {
       if (err.code === 11000 && err.name === 'MongoError') {
@@ -69,6 +70,7 @@ export class FlowController {
     },
   })
   async find(@param.filter(Flow) filter?: Filter<Flow>): Promise<Flow[]> {
+    // @todo manage versions
     const instanceCounts = await this.instanceRepository.countByFlow();
 
     const countByFlow = instanceCounts.reduce((acc: AnyObject, count: AnyObject) => {
@@ -103,6 +105,7 @@ export class FlowController {
     flow: Flow,
     @param.where(Flow) where?: Where<Flow>,
   ): Promise<Count> {
+    // @todo manage versions
     flow.updatedAt = new Date();
     return this.flowRepository.updateAll(flow, where);
   }
@@ -144,7 +147,7 @@ export class FlowController {
     })
     flow: Flow,
   ): Promise<void> {
-
+    // @todo manage versions
     await this.flowRepository.updateById(id, flow);
   }
 

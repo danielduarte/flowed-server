@@ -36,6 +36,21 @@ export class FlowRepository extends DefaultCrudRepository<T, ID, Relations> {
     data: DataObject<T>,
     options?: Options,
   ): Promise<void> {
+    await this.assignNewVersion(data, options);
+    return super.replaceById(id, data, options);
+  }
+
+  async upsert(entity: DataObject<T>, options?: Options): Promise<T> {
+    await this.assignNewVersion(entity, options);
+
+    // @todo check if it is equivalent to PUT or to PATCH
+    const data = await this.entityToData(entity, options);
+    const model = await ensurePromise(this.modelClass.upsert(data, options));
+    return this.toEntity(model);
+  }
+
+  async assignNewVersion(data: DataObject<T>, options?: Options): Promise<FlowVersion> {
+
     // Create version
     const newVersion = await this.flowVersionRepository.create(new FlowVersion({
       spec: data.spec || {},
@@ -47,12 +62,6 @@ export class FlowRepository extends DefaultCrudRepository<T, ID, Relations> {
     data.activeVersion = newVersion.id;
     delete data.spec;
 
-    return super.replaceById(id, data, options);
-  }
-
-  async upsert(entity: DataObject<T>, options?: Options): Promise<T> {
-    const data = await this.entityToData(entity, options);
-    const model = await ensurePromise(this.modelClass.upsert(data, options));
-    return this.toEntity(model);
+    return newVersion;
   }
 }
