@@ -8,9 +8,7 @@ export class InstanceSummaryRepository extends DefaultCrudRepository<
   typeof InstanceSummary.prototype.id,
   InstanceSummaryRelations
 > {
-  constructor(
-    @inject('datasources.InstanceSummary') dataSource: InstanceSummaryDataSource,
-  ) {
+  constructor(@inject('datasources.InstanceSummary') dataSource: InstanceSummaryDataSource) {
     super(InstanceSummary, dataSource);
   }
 }

@@ -1,19 +1,12 @@
-import {
-  Filter,
-  repository,
-} from '@loopback/repository';
-import {
-  param,
-  get,
-  getModelSchemaRef,
-} from '@loopback/rest';
+import {Filter, repository} from '@loopback/repository';
+import {param, get, getModelSchemaRef} from '@loopback/rest';
 import {InstanceSummary} from '../models';
 import {InstanceSummaryRepository} from '../repositories';
 
 export class InstanceSummaryController {
   constructor(
     @repository(InstanceSummaryRepository)
-    public instanceSummaryRepository : InstanceSummaryRepository,
+    public instanceSummaryRepository: InstanceSummaryRepository,
   ) {}
 
   @get('/instances/summary', {
@@ -31,9 +24,7 @@ export class InstanceSummaryController {
       },
     },
   })
-  async find(
-    @param.filter(InstanceSummary) filter?: Filter<InstanceSummary>,
-  ): Promise<InstanceSummary[]> {
+  async find(@param.filter(InstanceSummary) filter?: Filter<InstanceSummary>): Promise<InstanceSummary[]> {
     return this.instanceSummaryRepository.find(filter);
   }
 }

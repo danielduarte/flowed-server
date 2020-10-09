@@ -3,7 +3,7 @@ import {Flow, FlowRelations, FlowVersion} from '../models';
 import {FlowDataSource} from '../datasources';
 import {inject} from '@loopback/core';
 import {FlowVersionRepository} from './flow-version.repository';
-import { FilterExcludingWhere} from '@loopback/filter';
+import {FilterExcludingWhere} from '@loopback/filter';
 
 type ID = typeof Flow.prototype.id;
 type T = Flow;
@@ -12,16 +12,12 @@ type Relations = FlowRelations;
 export class FlowRepository extends DefaultCrudRepository<T, ID, Relations> {
   constructor(
     @inject('datasources.Flow') dataSource: FlowDataSource,
-    @repository(FlowVersionRepository) public flowVersionRepository: FlowVersionRepository
+    @repository(FlowVersionRepository) public flowVersionRepository: FlowVersionRepository,
   ) {
     super(Flow, dataSource);
   }
 
-  async findById(
-    id: ID,
-    filter?: FilterExcludingWhere<T>,
-    options?: Options,
-  ): Promise<T & Relations> {
+  async findById(id: ID, filter?: FilterExcludingWhere<T>, options?: Options): Promise<T & Relations> {
     const flow = await super.findById(id, filter, options);
 
     // Get spec from active version
@@ -31,11 +27,7 @@ export class FlowRepository extends DefaultCrudRepository<T, ID, Relations> {
     return flow;
   }
 
-  async replaceById(
-    id: ID,
-    data: DataObject<T>,
-    options?: Options,
-  ): Promise<void> {
+  async replaceById(id: ID, data: DataObject<T>, options?: Options): Promise<void> {
     await this.assignNewVersion(data, options);
     return super.replaceById(id, data, options);
   }
@@ -50,12 +42,14 @@ export class FlowRepository extends DefaultCrudRepository<T, ID, Relations> {
   }
 
   async assignNewVersion(data: DataObject<T>, options?: Options): Promise<FlowVersion> {
-
     // Create version
-    const newVersion = await this.flowVersionRepository.create(new FlowVersion({
-      spec: data.spec || {},
-      flowId: data.id,
-    }), options);
+    const newVersion = await this.flowVersionRepository.create(
+      new FlowVersion({
+        spec: data.spec ?? {},
+        flowId: data.id,
+      }),
+      options,
+    );
 
     // Update flow
     data.updatedAt = newVersion.createdAt;

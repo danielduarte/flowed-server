@@ -200,16 +200,23 @@ export class InstanceController {
       eventsByPid[pid][entry.eventType as string] = entry;
     }
 
-    const gantt = Object.entries(eventsByPid).map(([pid, data]) => [
-      pid,
-      data['Task.Started'].extra?.task?.code,
-      data['Task.Started'].extra?.task?.type,
-      data['Task.Started'].timestamp,
-      data['Task.Finished'].timestamp,
-      null,
-      100,
-      null,
-    ]);
+    const gantt = Object.entries(eventsByPid).map(([pid, data]) => {
+      const taskStarted = data['Task.Started'];
+      const taskFinished = data['Task.Finished'];
+
+      const task = taskStarted?.extra?.task ?? {};
+
+      return [
+        pid,
+        task.title ?? task.code ?? 'Unknown Task',
+        task.type ?? 'UnknownTaskType',
+        taskStarted?.timestamp ?? new Date(),
+        taskFinished?.timestamp ?? new Date(),
+        null,
+        100,
+        null,
+      ];
+    });
 
     return (gantt as unknown) as AnyObject[];
   }

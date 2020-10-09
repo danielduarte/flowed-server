@@ -16,7 +16,6 @@ export class InstanceSummary extends Entity {
   })
   count: number;
 
-
   constructor(data?: Partial<InstanceSummary>) {
     super(data);
   }

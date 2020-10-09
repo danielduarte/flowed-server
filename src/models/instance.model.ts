@@ -5,7 +5,6 @@ export class Instance extends Entity {
   @property({
     type: 'string',
     id: true,
-    generated: true,
   })
   id?: string;
 

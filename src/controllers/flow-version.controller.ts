@@ -1,28 +1,12 @@
-import {
-  Count,
-  CountSchema,
-  Filter,
-  FilterExcludingWhere,
-  repository,
-  Where,
-} from '@loopback/repository';
-import {
-  post,
-  param,
-  get,
-  getModelSchemaRef,
-  patch,
-  put,
-  del,
-  requestBody,
-} from '@loopback/rest';
+import {Count, CountSchema, Filter, FilterExcludingWhere, repository, Where} from '@loopback/repository';
+import {post, param, get, getModelSchemaRef, patch, put, del, requestBody} from '@loopback/rest';
 import {FlowVersion} from '../models';
 import {FlowVersionRepository} from '../repositories';
 
 export class FlowVersionController {
   constructor(
     @repository(FlowVersionRepository)
-    public flowVersionRepository : FlowVersionRepository,
+    public flowVersionRepository: FlowVersionRepository,
   ) {}
 
   @post('/flow-versions', {
@@ -57,9 +41,7 @@ export class FlowVersionController {
       },
     },
   })
-  async count(
-    @param.where(FlowVersion) where?: Where<FlowVersion>,
-  ): Promise<Count> {
+  async count(@param.where(FlowVersion) where?: Where<FlowVersion>): Promise<Count> {
     return this.flowVersionRepository.count(where);
   }
 
@@ -78,9 +60,7 @@ export class FlowVersionController {
       },
     },
   })
-  async find(
-    @param.filter(FlowVersion) filter?: Filter<FlowVersion>,
-  ): Promise<FlowVersion[]> {
+  async find(@param.filter(FlowVersion) filter?: Filter<FlowVersion>): Promise<FlowVersion[]> {
     return this.flowVersionRepository.find(filter);
   }
 
@@ -120,7 +100,7 @@ export class FlowVersionController {
   })
   async findById(
     @param.path.string('id') id: string,
-    @param.filter(FlowVersion, {exclude: 'where'}) filter?: FilterExcludingWhere<FlowVersion>
+    @param.filter(FlowVersion, {exclude: 'where'}) filter?: FilterExcludingWhere<FlowVersion>,
   ): Promise<FlowVersion> {
     return this.flowVersionRepository.findById(id, filter);
   }
@@ -153,10 +133,7 @@ export class FlowVersionController {
       },
     },
   })
-  async replaceById(
-    @param.path.string('id') id: string,
-    @requestBody() flowVersion: FlowVersion,
-  ): Promise<void> {
+  async replaceById(@param.path.string('id') id: string, @requestBody() flowVersion: FlowVersion): Promise<void> {
     await this.flowVersionRepository.replaceById(id, flowVersion);
   }
 
