@@ -40,6 +40,9 @@ export class RunController {
     });
 
     const newInstance = await this.instanceRepository.create(instanceInfo);
+    await this.flowRepository.updateById(flow.id, {
+      extra: {...(flow.extra ?? {}), _lastRunAt: new Date()},
+    });
 
     try {
       const results = await FlowManager.run(
