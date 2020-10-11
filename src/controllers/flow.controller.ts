@@ -80,7 +80,7 @@ export class FlowController {
 
     const flows = await this.flowRepository.find(filter);
     flows.forEach(flow => {
-      (flow as AnyObject).totalInstances = countByFlow[flow.id];
+      (flow as AnyObject).totalInstances = countByFlow[flow.id] || 0;
     });
 
     return flows;
