@@ -159,7 +159,7 @@ export class FlowController {
     },
   })
   async replaceById(@param.path.string('id') id: string, @requestBody() flow: Flow): Promise<void> {
-    await this.flowRepository.replaceById(id, flow);
+    await this.flowRepository.replaceById(id, flow, { reuseVersionIfEquivalent: true });
   }
 
   @del('/flows/{id}', {

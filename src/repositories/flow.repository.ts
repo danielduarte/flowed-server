@@ -4,6 +4,7 @@ import {FlowDataSource} from '../datasources';
 import {inject} from '@loopback/core';
 import {FlowVersionRepository} from './flow-version.repository';
 import {FilterExcludingWhere} from '@loopback/filter';
+import {HttpErrors} from '@loopback/rest';
 
 type ID = typeof Flow.prototype.id;
 type T = Flow;
@@ -21,8 +22,11 @@ export class FlowRepository extends DefaultCrudRepository<T, ID, Relations> {
     const flow = await super.findById(id, filter, options);
 
     // Get spec from active version
-    const version = await this.flowVersionRepository.findById(flow.activeVersion);
-    flow.spec = version.spec;
+    if (typeof flow.activeVersion !== 'undefined') {
+      console.warn(`Flow with id '${flow.id}' does not have an active version.`);
+      const version = await this.flowVersionRepository.findById(flow.activeVersion);
+      flow.spec = version.spec;
+    }
 
     return flow;
   }
@@ -42,20 +46,40 @@ export class FlowRepository extends DefaultCrudRepository<T, ID, Relations> {
   }
 
   async assignNewVersion(data: DataObject<T>, options?: Options): Promise<FlowVersion> {
-    // Create version
-    const newVersion = await this.flowVersionRepository.create(
-      new FlowVersion({
-        spec: data.spec ?? {},
-        flowId: data.id,
-      }),
-      options,
-    );
+    let createVersion = true;
+    let finalVersion;
 
-    // Update flow
-    data.updatedAt = newVersion.createdAt;
-    data.activeVersion = newVersion.id;
+    if (options?.reuseVersionIfEquivalent) {
+      const currentVersion = await this.flowVersionRepository.findById(data.activeVersion);
+      const equivalentVersions = JSON.stringify(currentVersion.spec) === JSON.stringify(data.spec);
+      if (equivalentVersions) {
+        createVersion = false;
+        finalVersion = currentVersion;
+      }
+    }
+
+    if (createVersion) {
+
+      // Create version
+      const newVersion = await this.flowVersionRepository.create(
+        new FlowVersion({
+          spec: data.spec ?? {},
+          flowId: data.id,
+        }),
+        options,
+      );
+      finalVersion = newVersion;
+
+      // Update flow version
+      data.activeVersion = newVersion.id;
+      data.updatedAt = newVersion.createdAt;
+    } else {
+      data.updatedAt = new Date();
+    }
+
+    // Remove spec from flow
     delete data.spec;
 
-    return newVersion;
+    return finalVersion as FlowVersion;
   }
 }
