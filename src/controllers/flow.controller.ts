@@ -32,7 +32,6 @@ export class FlowController {
     @param.query.boolean('upsert') upsert = false,
   ): Promise<Flow> {
     try {
-      // @todo manage versions on 'create'
       return await this.flowRepository[upsert ? 'upsert' : 'create'](flow);
     } catch (err) {
       if (err.code === 11000 && err.name === 'MongoError') {

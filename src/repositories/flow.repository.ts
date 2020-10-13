@@ -31,6 +31,11 @@ export class FlowRepository extends DefaultCrudRepository<T, ID, Relations> {
     return flow;
   }
 
+  async create(entity: DataObject<T>, options?: Options): Promise<T> {
+    await this.assignNewVersion(entity, options);
+    return super.create(entity, options);
+  }
+
   async replaceById(id: ID, data: DataObject<T>, options?: Options): Promise<void> {
     await this.assignNewVersion(data, options);
     return super.replaceById(id, data, options);
@@ -49,7 +54,7 @@ export class FlowRepository extends DefaultCrudRepository<T, ID, Relations> {
     let createVersion = true;
     let finalVersion;
 
-    if (options?.reuseVersionIfEquivalent) {
+    if (options?.reuseVersionIfEquivalent && data.activeVersion) {
       const currentVersion = await this.flowVersionRepository.findById(data.activeVersion);
       const equivalentVersions = JSON.stringify(currentVersion.spec) === JSON.stringify(data.spec);
       if (equivalentVersions) {
