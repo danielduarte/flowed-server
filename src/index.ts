@@ -5,6 +5,7 @@ import FlowedServerLogger from './services/flowed-server-logger';
 import {LogEntryRepository} from './repositories';
 import {LogEntryDataSource} from './datasources';
 
+
 export * from './application';
 
 export async function main(options: ApplicationConfig = {}) {

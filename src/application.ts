@@ -6,10 +6,17 @@ import {RestApplication} from '@loopback/rest';
 import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
 import {MySequence} from './sequence';
+import {createWebsocketServer} from './sync-service';
+import WS from 'ws';
+import {OutgoingMessage} from './types';
+
 
 export {ApplicationConfig};
 
 export class FlowedServerApplication extends BootMixin(ServiceMixin(RepositoryMixin(RestApplication))) {
+
+  public wss: WS.Server;
+
   constructor(options: ApplicationConfig = {}) {
     super(options);
 
@@ -35,5 +42,18 @@ export class FlowedServerApplication extends BootMixin(ServiceMixin(RepositoryMi
         nested: true,
       },
     };
+  }
+
+  start: () => Promise<void> = async () => {
+    await super.start();
+    createWebsocketServer(this, { port: 4002 });
+  };
+
+  broadcast(message: OutgoingMessage) {
+    this.wss.clients.forEach(function each(client) {
+      if (client.readyState === WS.OPEN) {
+        client.send(JSON.stringify(message));
+      }
+    });
   }
 }

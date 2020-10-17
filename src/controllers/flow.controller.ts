@@ -2,11 +2,15 @@ import {AnyObject, Count, CountSchema, Filter, FilterExcludingWhere, repository,
 import {post, param, get, getModelSchemaRef, patch, put, del, requestBody, HttpErrors} from '@loopback/rest';
 import {Flow} from '../models';
 import {FlowRepository, InstanceRepository} from '../repositories';
+import {CoreBindings, inject} from '@loopback/core';
+import {FlowedServerApplication} from '../application';
+import {OutgoingMessage, OutgoingMessageType} from '../types';
 
 export class FlowController {
   constructor(
     @repository(FlowRepository) public flowRepository: FlowRepository,
     @repository(InstanceRepository) public instanceRepository: InstanceRepository,
+    @inject(CoreBindings.APPLICATION_INSTANCE) protected app: FlowedServerApplication,
   ) {}
 
   @post('/flows', {
@@ -159,6 +163,7 @@ export class FlowController {
   })
   async replaceById(@param.path.string('id') id: string, @requestBody() flow: Flow): Promise<void> {
     await this.flowRepository.replaceById(id, flow, { reuseVersionIfEquivalent: true });
+    this.app.broadcast({ type: OutgoingMessageType.FlowChanged, payload: { flow } });
   }
 
   @del('/flows/{id}', {
