@@ -161,9 +161,13 @@ export class FlowController {
       },
     },
   })
-  async replaceById(@param.path.string('id') id: string, @requestBody() flow: Flow): Promise<void> {
+  async replaceById(
+    @param.path.string('id') id: string,
+    @param.query.string('sessionId') sessionId: string,
+    @requestBody() flow: Flow,
+  ): Promise<void> {
     await this.flowRepository.replaceById(id, flow, { reuseVersionIfEquivalent: true });
-    this.app.broadcast({ type: OutgoingMessageType.FlowChanged, payload: { flow } });
+    this.app.broadcast({ type: OutgoingMessageType.FlowChanged, payload: { flow, token: sessionId } });
   }
 
   @del('/flows/{id}', {
