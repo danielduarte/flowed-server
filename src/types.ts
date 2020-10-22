@@ -20,3 +20,7 @@ export interface IncomingMessage extends AbstractMessage {
 export interface OutgoingMessage extends AbstractMessage {
   type: OutgoingMessageType;
 }
+
+export interface WebSocketServerConfig {
+  port: number;
+}

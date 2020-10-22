@@ -4,7 +4,7 @@ import {FlowDataSource} from '../datasources';
 import {inject} from '@loopback/core';
 import {FlowVersionRepository} from './flow-version.repository';
 import {FilterExcludingWhere} from '@loopback/filter';
-import {HttpErrors} from '@loopback/rest';
+const debug = require('debug')('flowed');
 
 type ID = typeof Flow.prototype.id;
 type T = Flow;
@@ -23,7 +23,7 @@ export class FlowRepository extends DefaultCrudRepository<T, ID, Relations> {
 
     // Get spec from active version
     if (typeof flow.activeVersion !== 'undefined') {
-      console.warn(`Flow with id '${flow.id}' does not have an active version.`);
+      debug(`Flow with id '${flow.id}' does not have an active version.`);
       const version = await this.flowVersionRepository.findById(flow.activeVersion);
       flow.spec = version.spec;
     }
@@ -64,7 +64,6 @@ export class FlowRepository extends DefaultCrudRepository<T, ID, Relations> {
     }
 
     if (createVersion) {
-
       // Create version
       const newVersion = await this.flowVersionRepository.create(
         new FlowVersion({

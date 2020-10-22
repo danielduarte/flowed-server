@@ -9,12 +9,13 @@ import {MySequence} from './sequence';
 import {createWebsocketServer} from './sync-service';
 import WS from 'ws';
 import {OutgoingMessage} from './types';
-
+import {AuthenticationComponent} from '@loopback/authentication';
+import {JWTAuthenticationComponent, UserServiceBindings} from '@loopback/authentication-jwt';
+import {DbDataSource} from './datasources';
 
 export {ApplicationConfig};
 
 export class FlowedServerApplication extends BootMixin(ServiceMixin(RepositoryMixin(RestApplication))) {
-
   public wss: WS.Server;
 
   constructor(options: ApplicationConfig = {}) {
@@ -42,11 +43,23 @@ export class FlowedServerApplication extends BootMixin(ServiceMixin(RepositoryMi
         nested: true,
       },
     };
+
+    // Mount authentication system with jwt strategy
+    this.component(AuthenticationComponent);
+    this.component(JWTAuthenticationComponent);
+    this.dataSource(DbDataSource, UserServiceBindings.DATASOURCE_NAME);
   }
 
   start: () => Promise<void> = async () => {
     await super.start();
-    createWebsocketServer(this, { port: 4002 });
+
+    const isTesting = process.argv[1].endsWith('mocha');
+    if (!isTesting) {
+      // eslint-disable-next-line @typescript-eslint/no-invalid-this
+      createWebsocketServer(this, {port: this.options.ws.port});
+      // eslint-disable-next-line @typescript-eslint/no-invalid-this
+      console.log(`WebSocket server is running at port ${this.options.ws.port}`);
+    }
   };
 
   broadcast(message: OutgoingMessage) {

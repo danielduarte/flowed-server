@@ -5,7 +5,6 @@ import FlowedServerLogger from './services/flowed-server-logger';
 import {LogEntryRepository} from './repositories';
 import {LogEntryDataSource} from './datasources';
 
-
 export * from './application';
 
 export async function main(options: ApplicationConfig = {}) {
@@ -17,8 +16,7 @@ export async function main(options: ApplicationConfig = {}) {
   await app.start();
 
   const url = app.restServer.url;
-  console.log(`Server is running at ${url}`);
-  console.log(`Try ${url}/ping`);
+  console.log(`Rest server is running at ${url}`);
 
   return app;
 }
@@ -40,7 +38,11 @@ if (require.main === module) {
         setServersFromRequest: true,
       },
     },
+    ws: {
+      port: +(process.env.PORT_WS ?? 4002),
+    },
   };
+
   main(config).catch(err => {
     console.error('Cannot start the application.', err);
     process.exit(1);

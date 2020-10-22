@@ -4,7 +4,7 @@ import {Flow} from '../models';
 import {FlowRepository, InstanceRepository} from '../repositories';
 import {CoreBindings, inject} from '@loopback/core';
 import {FlowedServerApplication} from '../application';
-import {OutgoingMessage, OutgoingMessageType} from '../types';
+import {OutgoingMessageType} from '../types';
 
 export class FlowController {
   constructor(
@@ -166,8 +166,8 @@ export class FlowController {
     @param.query.string('sessionId') sessionId: string,
     @requestBody() flow: Flow,
   ): Promise<void> {
-    await this.flowRepository.replaceById(id, flow, { reuseVersionIfEquivalent: true });
-    this.app.broadcast({ type: OutgoingMessageType.FlowChanged, payload: { flow, token: sessionId } });
+    await this.flowRepository.replaceById(id, flow, {reuseVersionIfEquivalent: true});
+    this.app.broadcast({type: OutgoingMessageType.FlowChanged, payload: {flow, token: sessionId}});
   }
 
   @del('/flows/{id}', {
