@@ -5,7 +5,9 @@ import {FlowRepository, InstanceRepository} from '../repositories';
 import {CoreBindings, inject} from '@loopback/core';
 import {FlowedServerApplication} from '../application';
 import {OutgoingMessageType} from '../types';
+import {authenticate} from '@loopback/authentication';
 
+@authenticate('jwt')
 export class FlowController {
   constructor(
     @repository(FlowRepository) public flowRepository: FlowRepository,

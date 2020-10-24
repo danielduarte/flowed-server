@@ -3,7 +3,9 @@ import {post, getModelSchemaRef, param, requestBody, HttpErrors} from '@loopback
 import {FlowRepository, InstanceRepository} from '../repositories';
 import {Flow, Instance} from '../models';
 import {FlowManager, ValueMap} from 'flowed';
+import {authenticate} from '@loopback/authentication';
 
+@authenticate('jwt')
 export class RunController {
   constructor(
     @repository(FlowRepository) public flowRepository: FlowRepository,

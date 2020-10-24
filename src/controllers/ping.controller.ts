@@ -1,5 +1,6 @@
 import {Request, RestBindings, get, ResponseObject} from '@loopback/rest';
 import {inject} from '@loopback/core';
+import {authenticate} from '@loopback/authentication';
 
 /**
  * OpenAPI response for ping()
@@ -31,6 +32,7 @@ const PING_RESPONSE: ResponseObject = {
 /**
  * A simple controller to bounce back http requests
  */
+@authenticate('jwt')
 export class PingController {
   constructor(@inject(RestBindings.Http.REQUEST) private req: Request) {}
 

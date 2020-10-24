@@ -2,7 +2,9 @@ import {AnyObject, Count, CountSchema, Filter, FilterExcludingWhere, repository,
 import {post, param, get, getModelSchemaRef, patch, put, del, requestBody} from '@loopback/rest';
 import {Instance, LogEntry} from '../models';
 import {InstanceRepository, LogEntryRepository} from '../repositories';
+import {authenticate} from '@loopback/authentication';
 
+@authenticate('jwt')
 export class InstanceController {
   constructor(
     @repository(InstanceRepository) public instanceRepository: InstanceRepository,

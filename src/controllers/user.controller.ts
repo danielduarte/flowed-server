@@ -48,7 +48,7 @@ export class UserController {
     @repository(UserRepository) protected userRepository: UserRepository,
   ) {}
 
-  @post('/users/login', {
+  @post('/login', {
     responses: {
       '200': {
         description: 'Token',
@@ -98,7 +98,7 @@ export class UserController {
     return currentUserProfile[securityId];
   }
 
-  @post('/signup', {
+  @post('/register', {
     responses: {
       '200': {
         description: 'User',
@@ -112,7 +112,7 @@ export class UserController {
       },
     },
   })
-  async signUp(
+  async register(
     @requestBody({
       content: {
         'application/json': {
