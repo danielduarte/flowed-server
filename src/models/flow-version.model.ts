@@ -1,11 +1,13 @@
-import {AnyObject, Entity, model, property} from '@loopback/repository';
+import {AnyObject, model, property} from '@loopback/repository';
+import {OwnedEntity} from './abstract/owned-entity';
 
 @model()
-export class FlowVersion extends Entity {
+export class FlowVersion extends OwnedEntity {
   @property({
     type: 'string',
     id: true,
     generated: true,
+    // @todo implement: defaultFn: 'uuidv4',
   })
   id?: string;
 

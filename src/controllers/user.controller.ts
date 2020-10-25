@@ -92,8 +92,7 @@ export class UserController {
     },
   })
   async whoAmI(
-    @inject(SecurityBindings.USER)
-    currentUserProfile: UserProfile,
+    @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
   ): Promise<string> {
     return currentUserProfile[securityId];
   }

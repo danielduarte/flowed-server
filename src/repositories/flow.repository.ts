@@ -69,6 +69,7 @@ export class FlowRepository extends DefaultCrudRepository<T, ID, Relations> {
         new FlowVersion({
           spec: data.spec ?? {},
           flowId: data.id,
+          ownerId: data.ownerId,
         }),
         options,
       );

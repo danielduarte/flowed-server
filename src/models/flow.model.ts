@@ -1,7 +1,8 @@
-import {Entity, model, property, AnyObject} from '@loopback/repository';
+import {model, property, AnyObject} from '@loopback/repository';
+import {OwnedEntity} from './abstract/owned-entity';
 
-@model({settings: {strict: false}})
-export class Flow extends Entity {
+@model({settings: {strict: true}})
+export class Flow extends OwnedEntity {
   @property({
     type: 'string',
     id: true,

@@ -1,11 +1,13 @@
-import {Entity, model, property} from '@loopback/repository';
+import {model, property} from '@loopback/repository';
+import {OwnedEntity} from './abstract/owned-entity';
 
 @model()
-export class LogEntry extends Entity {
+export class LogEntry extends OwnedEntity {
   @property({
     type: 'string',
     id: true,
     generated: true,
+    defaultFn: 'uuidv4',
   })
   id?: string;
 

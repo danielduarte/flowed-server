@@ -1,18 +1,21 @@
 import {AnyObject, Count, CountSchema, Filter, FilterExcludingWhere, repository, Where} from '@loopback/repository';
 import {post, param, get, getModelSchemaRef, patch, put, del, requestBody, HttpErrors} from '@loopback/rest';
-import {Flow} from '../models';
+import {Flow, LogEntry} from '../models';
 import {FlowRepository, InstanceRepository} from '../repositories';
 import {CoreBindings, inject} from '@loopback/core';
 import {FlowedServerApplication} from '../application';
 import {OutgoingMessageType} from '../types';
 import {authenticate} from '@loopback/authentication';
+import {securityId, SecurityBindings, UserProfile} from '@loopback/security';
+
 
 @authenticate('jwt')
 export class FlowController {
   constructor(
-    @repository(FlowRepository) public flowRepository: FlowRepository,
-    @repository(InstanceRepository) public instanceRepository: InstanceRepository,
+    @repository(FlowRepository) protected flowRepository: FlowRepository,
+    @repository(InstanceRepository) protected instanceRepository: InstanceRepository,
     @inject(CoreBindings.APPLICATION_INSTANCE) protected app: FlowedServerApplication,
+    @inject(SecurityBindings.USER) protected user: UserProfile,
   ) {}
 
   @post('/flows', {
@@ -30,18 +33,23 @@ export class FlowController {
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Flow, {title: 'NewFlow'}),
+          schema: getModelSchemaRef(Flow, {
+            title: 'NewFlow',
+            exclude: ['ownerId'],
+          }),
         },
       },
     })
-    flow: Flow,
+    flow: Omit<Flow, 'ownerId'>,
     @param.query.boolean('upsert') upsert = false,
   ): Promise<Flow> {
+    const newFlow: Flow = new Flow(flow);
+    newFlow.ownerId = this.user[securityId];
     try {
-      return await this.flowRepository[upsert ? 'upsert' : 'create'](flow);
+      return await this.flowRepository[upsert ? 'upsert' : 'create'](newFlow);
     } catch (err) {
       if (err.code === 11000 && err.name === 'MongoError') {
-        throw new HttpErrors.Conflict(`Flow with id '${flow.id}' already exists.`);
+        throw new HttpErrors.Conflict(`Flow with id '${newFlow.id}' already exists.`);
       }
       throw err;
     }
