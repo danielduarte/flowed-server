@@ -1,14 +1,14 @@
 import {repository} from '@loopback/repository';
 import {post, getModelSchemaRef, requestBody} from '@loopback/rest';
 import {LogEntry} from '../models';
-import {InstanceRepository, LogEntryRepository} from '../repositories';
+import {OwnedInstanceRepository, OwnedLogEntryRepository} from '../repositories';
 import {authenticate} from '@loopback/authentication';
 
 @authenticate('jwt')
 export class LogEntryController {
   constructor(
-    @repository(LogEntryRepository) public logEntryRepository: LogEntryRepository,
-    @repository(InstanceRepository) public instanceRepository: InstanceRepository,
+    @repository(OwnedLogEntryRepository) public logEntryRepository: OwnedLogEntryRepository,
+    @repository(OwnedInstanceRepository) public instanceRepository: OwnedInstanceRepository,
   ) {}
 
   @post('/log-entries', {

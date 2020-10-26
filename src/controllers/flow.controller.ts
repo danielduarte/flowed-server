@@ -1,7 +1,7 @@
 import {AnyObject, Count, CountSchema, Filter, FilterExcludingWhere, repository, Where} from '@loopback/repository';
 import {post, param, get, getModelSchemaRef, patch, put, del, requestBody, HttpErrors} from '@loopback/rest';
 import {Flow} from '../models';
-import {OwnedFlowRepository, InstanceRepository} from '../repositories';
+import {OwnedFlowRepository, OwnedInstanceRepository} from '../repositories';
 import {CoreBindings, inject} from '@loopback/core';
 import {FlowedServerApplication} from '../application';
 import {OutgoingMessageType} from '../types';
@@ -11,7 +11,7 @@ import {authenticate} from '@loopback/authentication';
 export class FlowController {
   constructor(
     @repository(OwnedFlowRepository) protected flowRepository: OwnedFlowRepository,
-    @repository(InstanceRepository) protected instanceRepository: InstanceRepository,
+    @repository(OwnedInstanceRepository) protected instanceRepository: OwnedInstanceRepository, // @todo use owned repo
     @inject(CoreBindings.APPLICATION_INSTANCE) protected app: FlowedServerApplication,
   ) {}
 

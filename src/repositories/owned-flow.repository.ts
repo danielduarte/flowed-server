@@ -11,7 +11,6 @@ export class OwnedFlowRepository extends OwnedCrudRepository<Flow, typeof Flow.p
     @inject(SecurityBindings.USER) protected owner: UserProfile,
   ) {
     super(flowRepository, owner);
-    console.log('created flow repository for user', owner);
   }
 
   async upsert(entity: DataObject<Flow>, options?: Options): Promise<Flow> {

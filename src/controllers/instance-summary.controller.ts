@@ -1,12 +1,12 @@
 import {Filter, repository} from '@loopback/repository';
 import {param, get, getModelSchemaRef} from '@loopback/rest';
 import {InstanceSummary} from '../models';
-import {InstanceSummaryRepository} from '../repositories';
+import {OwnedInstanceSummaryRepository} from '../repositories';
 import {authenticate} from '@loopback/authentication';
 
 @authenticate('jwt')
 export class InstanceSummaryController {
-  constructor(@repository(InstanceSummaryRepository) public instanceSummaryRepository: InstanceSummaryRepository) {}
+  constructor(@repository(OwnedInstanceSummaryRepository) public instanceSummaryRepository: OwnedInstanceSummaryRepository) {}
 
   @get('/instances/summary', {
     responses: {

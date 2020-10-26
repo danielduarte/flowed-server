@@ -1,14 +1,13 @@
 import {Count, CountSchema, Filter, FilterExcludingWhere, repository, Where} from '@loopback/repository';
 import {post, param, get, getModelSchemaRef, patch, put, del, requestBody} from '@loopback/rest';
 import {FlowVersion} from '../models';
-import {FlowVersionRepository} from '../repositories';
+import {OwnedFlowVersionRepository} from '../repositories';
 import {authenticate} from '@loopback/authentication';
 
 @authenticate('jwt')
 export class FlowVersionController {
   constructor(
-    @repository(FlowVersionRepository)
-    public flowVersionRepository: FlowVersionRepository,
+    @repository(OwnedFlowVersionRepository) public flowVersionRepository: OwnedFlowVersionRepository,
   ) {}
 
   @post('/flow-versions', {

@@ -10,3 +10,7 @@ export * from './instance-summary.repository';
 
 // Owned
 export * from './owned-flow.repository';
+export * from './owned-instance.repository';
+export * from './owned-log-entry.repository';
+export * from './owned-flow-version.repository';
+export * from './owned-instance-summary.repository';
