@@ -12,6 +12,8 @@ import {OutgoingMessage} from './types';
 import {AuthenticationComponent} from '@loopback/authentication';
 import {JWTAuthenticationComponent, UserServiceBindings} from '@loopback/authentication-jwt';
 import {DbDataSource} from './datasources';
+import {TokenServiceBindings} from '@loopback/authentication-jwt';
+require('dotenv').config();
 
 export {ApplicationConfig};
 
@@ -34,6 +36,7 @@ export class FlowedServerApplication extends BootMixin(ServiceMixin(RepositoryMi
     this.component(RestExplorerComponent);
 
     this.projectRoot = __dirname;
+
     // Customize @loopback/boot Booter Conventions here
     this.bootOptions = {
       controllers: {
@@ -43,11 +46,21 @@ export class FlowedServerApplication extends BootMixin(ServiceMixin(RepositoryMi
         nested: true,
       },
     };
-
     // Mount authentication system with jwt strategy
     this.component(AuthenticationComponent);
     this.component(JWTAuthenticationComponent);
+    this.setupSecurity();
+
     this.dataSource(DbDataSource, UserServiceBindings.DATASOURCE_NAME);
+  }
+
+  setupSecurity() {
+    if (process.env.TOKEN_SECRET) {
+      this.bind(TokenServiceBindings.TOKEN_SECRET).to(process.env.TOKEN_SECRET);
+    }
+    if (process.env.TOKEN_EXPIRES_IN) {
+      this.bind(TokenServiceBindings.TOKEN_EXPIRES_IN).to(process.env.TOKEN_EXPIRES_IN);
+    }
   }
 
   start: () => Promise<void> = async () => {
@@ -55,9 +68,7 @@ export class FlowedServerApplication extends BootMixin(ServiceMixin(RepositoryMi
 
     const isTesting = process.argv[1].endsWith('mocha');
     if (!isTesting) {
-      // eslint-disable-next-line @typescript-eslint/no-invalid-this
       createWebsocketServer(this, {port: this.options.ws.port});
-      // eslint-disable-next-line @typescript-eslint/no-invalid-this
       console.log(`WebSocket server is running at port ${this.options.ws.port}`);
     }
   };

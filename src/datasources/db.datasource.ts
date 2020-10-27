@@ -1,17 +1,7 @@
 import {inject} from '@loopback/core';
 import {juggler} from '@loopback/repository';
 
-const config = {
-  name: 'db',
-  connector: 'mongodb',
-  url: '',
-  host: 'localhost',
-  port: 0,
-  user: '',
-  password: '',
-  database: 'flowed',
-  useNewUrlParser: true,
-};
+const config = require('./db.default');
 
 export class DbDataSource extends juggler.DataSource {
   static dataSourceName = 'db';

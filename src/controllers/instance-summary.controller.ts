@@ -6,7 +6,9 @@ import {authenticate} from '@loopback/authentication';
 
 @authenticate('jwt')
 export class InstanceSummaryController {
-  constructor(@repository(OwnedInstanceSummaryRepository) public instanceSummaryRepository: OwnedInstanceSummaryRepository) {}
+  constructor(
+    @repository(OwnedInstanceSummaryRepository) public instanceSummaryRepository: OwnedInstanceSummaryRepository,
+  ) {}
 
   @get('/instances/summary', {
     responses: {

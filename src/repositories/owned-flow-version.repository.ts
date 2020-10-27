@@ -5,7 +5,11 @@ import {FlowVersionRepository} from './flow-version.repository';
 import {SecurityBindings, UserProfile} from '@loopback/security';
 import {inject} from '@loopback/core';
 
-export class OwnedFlowVersionRepository extends OwnedCrudRepository<FlowVersion, typeof FlowVersion.prototype.id, FlowVersionRelations> {
+export class OwnedFlowVersionRepository extends OwnedCrudRepository<
+  FlowVersion,
+  typeof FlowVersion.prototype.id,
+  FlowVersionRelations
+> {
   constructor(
     @repository(FlowVersionRepository) protected versionRepository: FlowVersionRepository,
     @inject(SecurityBindings.USER) protected owner: UserProfile,

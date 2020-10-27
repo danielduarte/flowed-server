@@ -1,17 +1,7 @@
 import {inject, lifeCycleObserver, LifeCycleObserver} from '@loopback/core';
 import {juggler} from '@loopback/repository';
 
-const config = {
-  name: 'Instances',
-  connector: 'mongodb',
-  url: '',
-  host: 'localhost',
-  port: 0,
-  user: '',
-  password: '',
-  database: 'flowed',
-  useNewUrlParser: true,
-};
+const config = require('./db.default');
 
 // Observe application's life cycle to disconnect the datasource when
 // application is stopped. This allows the application to be shut down

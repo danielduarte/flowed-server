@@ -6,9 +6,7 @@ import {authenticate} from '@loopback/authentication';
 
 @authenticate('jwt')
 export class FlowVersionController {
-  constructor(
-    @repository(OwnedFlowVersionRepository) public flowVersionRepository: OwnedFlowVersionRepository,
-  ) {}
+  constructor(@repository(OwnedFlowVersionRepository) public flowVersionRepository: OwnedFlowVersionRepository) {}
 
   @post('/flow-versions', {
     responses: {

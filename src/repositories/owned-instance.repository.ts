@@ -5,7 +5,11 @@ import {InstanceRepository} from './instance.repository';
 import {SecurityBindings, UserProfile} from '@loopback/security';
 import {inject} from '@loopback/core';
 
-export class OwnedInstanceRepository extends OwnedCrudRepository<Instance, typeof Instance.prototype.id, InstanceRelations> {
+export class OwnedInstanceRepository extends OwnedCrudRepository<
+  Instance,
+  typeof Instance.prototype.id,
+  InstanceRelations
+> {
   constructor(
     @repository(InstanceRepository) protected instanceRepository: InstanceRepository,
     @inject(SecurityBindings.USER) protected owner: UserProfile,

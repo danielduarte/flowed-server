@@ -53,6 +53,7 @@
     "@loopback/rest": "^8.0.0",
     "@loopback/rest-explorer": "^3.0.2",
     "@loopback/service-proxy": "^3.0.2",
+    "dotenv": "^8.2.0",
     "flowed": "^1.12.2",
     "flowed-openapi": "^0.1.4",
     "loopback-connector-mongodb": "^5.4.0",
