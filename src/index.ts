@@ -5,6 +5,10 @@ import FlowedServerLogger from './services/flowed-server-logger';
 import {LogEntryRepository} from './repositories';
 import {LogEntryDataSource} from './datasources';
 
+// Load configuration packages
+require('dotenv').config();
+const appEnv = require('cfenv').getAppEnv();
+
 export * from './application';
 
 export async function main(options: ApplicationConfig = {}) {
@@ -42,6 +46,10 @@ if (require.main === module) {
       port: +(process.env.PORT_WS ?? 4002),
     },
   };
+
+  // Override with IMB Cloud Foundry configuration is needed
+  config.rest.port = appEnv.isLocal ? config.rest.port : appEnv.port;
+  config.rest.host = appEnv.isLocal ? config.rest.host : appEnv.host;
 
   main(config).catch(err => {
     console.error('Cannot start the application.', err);

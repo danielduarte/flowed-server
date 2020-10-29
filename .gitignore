@@ -65,3 +65,6 @@ typings/
 
 # IDE files
 /.idea/
+
+# Configs
+/src/datasources/db.default.prod.ts

@@ -1,0 +1,8 @@
+applications:
+- name: flowed-hub
+  disk_quota: 1G
+  instances: 1
+  memory: 0.2G
+  routes:
+  - route: flowed-hub.mybluemix.net
+  stack: cflinuxfs3

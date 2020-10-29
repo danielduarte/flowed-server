@@ -13,7 +13,6 @@ import {AuthenticationComponent} from '@loopback/authentication';
 import {JWTAuthenticationComponent, UserServiceBindings} from '@loopback/authentication-jwt';
 import {DbDataSource} from './datasources';
 import {TokenServiceBindings} from '@loopback/authentication-jwt';
-require('dotenv').config();
 
 export {ApplicationConfig};
 
@@ -68,12 +67,21 @@ export class FlowedServerApplication extends BootMixin(ServiceMixin(RepositoryMi
 
     const isTesting = process.argv[1].endsWith('mocha');
     if (!isTesting) {
+      if (process.env.WS_ENABLED !== '1') {
+        console.log('WebSocket disabled by configuration');
+        return;
+      }
       createWebsocketServer(this, {port: this.options.ws.port});
       console.log(`WebSocket server is running at port ${this.options.ws.port}`);
     }
   };
 
   broadcast(message: OutgoingMessage) {
+    if (!this.wss) {
+      console.log('WebSocket disabled by configuration. Broadcast message not sent:', message);
+      return;
+    }
+
     this.wss.clients.forEach(function each(client) {
       if (client.readyState === WS.OPEN) {
         client.send(JSON.stringify(message));
