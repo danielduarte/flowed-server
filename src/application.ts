@@ -28,11 +28,14 @@ export class FlowedServerApplication extends BootMixin(ServiceMixin(RepositoryMi
     // Set up default home page
     this.static('/', path.join(__dirname, '../public'));
 
-    // Customize @loopback/rest-explorer configuration here
-    this.configure(RestExplorerBindings.COMPONENT).to({
-      path: '/explorer',
-    });
-    this.component(RestExplorerComponent);
+    const explorerDisabled = !options.rest.openApiSpec || options.rest.openApiSpec.disabled;
+    if (!explorerDisabled) {
+      // Customize @loopback/rest-explorer configuration here
+      this.configure(RestExplorerBindings.COMPONENT).to({
+        path: '/explorer',
+      });
+      this.component(RestExplorerComponent);
+    }
 
     this.projectRoot = __dirname;
 
