@@ -80,21 +80,6 @@ export class UserController {
     return {token};
   }
 
-  @authenticate('jwt')
-  @get('/whoAmI', {
-    responses: {
-      '200': {
-        description: '',
-        schema: {
-          type: 'string',
-        },
-      },
-    },
-  })
-  async whoAmI(@inject(SecurityBindings.USER) currentUserProfile: UserProfile): Promise<string> {
-    return currentUserProfile[securityId];
-  }
-
   @post('/register', {
     responses: {
       '200': {

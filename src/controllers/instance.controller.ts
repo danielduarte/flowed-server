@@ -66,29 +66,6 @@ export class InstanceController {
     return this.instanceRepository.find(filter);
   }
 
-  @patch('/instances', {
-    responses: {
-      '200': {
-        description: 'Instance PATCH success count',
-        content: {'application/json': {schema: CountSchema}},
-      },
-    },
-  })
-  async updateAll(
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(Instance, {partial: true}),
-        },
-      },
-    })
-    instance: Instance,
-    @param.where(Instance) where?: Where<Instance>,
-  ): Promise<Count> {
-    instance.updatedAt = new Date();
-    return this.instanceRepository.updateAll(instance, where);
-  }
-
   @get('/instances/{id}', {
     responses: {
       '200': {
@@ -129,18 +106,6 @@ export class InstanceController {
   ): Promise<void> {
     instance.updatedAt = new Date();
     await this.instanceRepository.updateById(id, instance);
-  }
-
-  @put('/instances/{id}', {
-    responses: {
-      '204': {
-        description: 'Instance PUT success',
-      },
-    },
-  })
-  async replaceById(@param.path.string('id') id: string, @requestBody() instance: Instance): Promise<void> {
-    instance.updatedAt = new Date();
-    await this.instanceRepository.replaceById(id, instance);
   }
 
   @del('/instances/{id}', {

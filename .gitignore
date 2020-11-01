@@ -55,7 +55,8 @@ typings/
 .yarn-integrity
 
 # dotenv environment variables file
-.env
+/.env
+/.env.prod
 
 # Transpiled JavaScript files from Typescript
 /dist

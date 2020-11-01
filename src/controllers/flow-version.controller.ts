@@ -63,28 +63,6 @@ export class FlowVersionController {
     return this.flowVersionRepository.find(filter);
   }
 
-  @patch('/flow-versions', {
-    responses: {
-      '200': {
-        description: 'FlowVersion PATCH success count',
-        content: {'application/json': {schema: CountSchema}},
-      },
-    },
-  })
-  async updateAll(
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(FlowVersion, {partial: true}),
-        },
-      },
-    })
-    flowVersion: FlowVersion,
-    @param.where(FlowVersion) where?: Where<FlowVersion>,
-  ): Promise<Count> {
-    return this.flowVersionRepository.updateAll(flowVersion, where);
-  }
-
   @get('/flow-versions/{id}', {
     responses: {
       '200': {
@@ -102,38 +80,6 @@ export class FlowVersionController {
     @param.filter(FlowVersion, {exclude: 'where'}) filter?: FilterExcludingWhere<FlowVersion>,
   ): Promise<FlowVersion> {
     return this.flowVersionRepository.findById(id, filter);
-  }
-
-  @patch('/flow-versions/{id}', {
-    responses: {
-      '204': {
-        description: 'FlowVersion PATCH success',
-      },
-    },
-  })
-  async updateById(
-    @param.path.string('id') id: string,
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(FlowVersion, {partial: true}),
-        },
-      },
-    })
-    flowVersion: FlowVersion,
-  ): Promise<void> {
-    await this.flowVersionRepository.updateById(id, flowVersion);
-  }
-
-  @put('/flow-versions/{id}', {
-    responses: {
-      '204': {
-        description: 'FlowVersion PUT success',
-      },
-    },
-  })
-  async replaceById(@param.path.string('id') id: string, @requestBody() flowVersion: FlowVersion): Promise<void> {
-    await this.flowVersionRepository.replaceById(id, flowVersion);
   }
 
   @del('/flow-versions/{id}', {
