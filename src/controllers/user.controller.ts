@@ -27,7 +27,7 @@ const CredentialsSchema: SchemaObject = {
     },
     password: {
       type: 'string',
-      minLength: 8,
+      minLength: 6,
     },
   },
 };
@@ -110,6 +110,17 @@ export class UserController {
     const savedUser = await this.userRepository.create(_.omit(newUserRequest, 'password'));
 
     await this.userRepository.userCredentials(savedUser.id).create({password});
+
+    // @todo parametrize autoLogin option
+    const autoLogin = true;
+    if (autoLogin) {
+      // @todo Check if credentials needs to be verified here or if it is redundant
+      const user = await this.userService.verifyCredentials({ email: newUserRequest.email, password: newUserRequest.password });
+      const userProfile = this.userService.convertToUserProfile(user);
+      const token = await this.jwtService.generateToken(userProfile);
+
+      savedUser.token = token;
+    }
 
     return savedUser;
   }
