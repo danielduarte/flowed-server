@@ -1,5 +1,5 @@
 import {Count, CountSchema, Filter, FilterExcludingWhere, repository, Where} from '@loopback/repository';
-import {post, param, get, getModelSchemaRef, patch, put, del, requestBody} from '@loopback/rest';
+import {post, param, get, getModelSchemaRef, del, requestBody} from '@loopback/rest';
 import {FlowVersion} from '../models';
 import {OwnedFlowVersionRepository} from '../repositories';
 import {authenticate} from '@loopback/authentication';

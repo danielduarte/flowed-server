@@ -1,7 +1,7 @@
 import {inject} from '@loopback/core';
 import {TokenServiceBindings, MyUserService, UserServiceBindings, UserRepository} from '@loopback/authentication-jwt';
 import {TokenService, authenticate} from '@loopback/authentication';
-import {SecurityBindings, UserProfile, securityId} from '@loopback/security';
+import {SecurityBindings, UserProfile} from '@loopback/security';
 import {repository, model, property} from '@loopback/repository';
 import {Credentials, User} from '@loopback/authentication-jwt';
 import {get, getModelSchemaRef, post, requestBody, SchemaObject} from '@loopback/rest';
@@ -115,7 +115,10 @@ export class UserController {
     const autoLogin = true;
     if (autoLogin) {
       // @todo Check if credentials needs to be verified here or if it is redundant
-      const user = await this.userService.verifyCredentials({ email: newUserRequest.email, password: newUserRequest.password });
+      const user = await this.userService.verifyCredentials({
+        email: newUserRequest.email,
+        password: newUserRequest.password,
+      });
       const userProfile = this.userService.convertToUserProfile(user);
       const token = await this.jwtService.generateToken(userProfile);
 
@@ -123,5 +126,24 @@ export class UserController {
     }
 
     return savedUser;
+  }
+
+  @authenticate('jwt')
+  @get('/profile', {
+    responses: {
+      '200': {
+        description: 'User Profile',
+        content: {
+          'application/json': {
+            schema: {
+              'x-ts-type': User,
+            },
+          },
+        },
+      },
+    },
+  })
+  async getProfile(): Promise<User> {
+    return this.userService.findUserById(this.user.id);
   }
 }

@@ -1,5 +1,5 @@
 import {AnyObject, Count, CountSchema, Filter, FilterExcludingWhere, repository, Where} from '@loopback/repository';
-import {post, param, get, getModelSchemaRef, patch, put, del, requestBody} from '@loopback/rest';
+import {post, param, get, getModelSchemaRef, patch, del, requestBody} from '@loopback/rest';
 import {Instance, LogEntry} from '../models';
 import {OwnedInstanceRepository, OwnedLogEntryRepository} from '../repositories';
 import {authenticate} from '@loopback/authentication';
