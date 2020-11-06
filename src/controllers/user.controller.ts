@@ -4,7 +4,7 @@ import {TokenService, authenticate} from '@loopback/authentication';
 import {SecurityBindings, UserProfile} from '@loopback/security';
 import {repository, model, property} from '@loopback/repository';
 import {Credentials, User} from '@loopback/authentication-jwt';
-import {get, getModelSchemaRef, post, requestBody, SchemaObject} from '@loopback/rest';
+import {get, patch, post, requestBody, getModelSchemaRef, SchemaObject} from '@loopback/rest';
 import {genSalt, hash} from 'bcryptjs';
 import _ from 'lodash';
 
@@ -145,5 +145,36 @@ export class UserController {
   })
   async getProfile(): Promise<User> {
     return this.userService.findUserById(this.user.id);
+  }
+
+  @authenticate('jwt')
+  @patch('/profile', {
+    responses: {
+      '204': {
+        description: 'Profile update success',
+      },
+    },
+  })
+  async updateProfile(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(User, {partial: true}),
+        },
+      },
+    })
+    profile: User,
+  ): Promise<void> {
+    // Save user profile
+    const profileInfo = _.omit(profile, 'password');
+    if (!_.isEmpty(profileInfo)) {
+      await this.userRepository.updateById(this.user.id, profileInfo);
+    }
+
+    // Save password
+    if (profile.password) {
+      const password = await hash(profile.password, await genSalt());
+      await this.userRepository.userCredentials(this.user.id).patch({password});
+    }
   }
 }
