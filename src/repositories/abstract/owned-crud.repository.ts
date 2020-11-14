@@ -1,7 +1,7 @@
 import {DefaultCrudRepository, DataObject, Options, Entity, EntityNotFoundError} from '@loopback/repository';
 import {FilterExcludingWhere, Filter, Where, AndClause, Condition} from '@loopback/filter';
 import {EntityCrudRepository} from '@loopback/repository/src/repositories/repository';
-import {juggler} from '@loopback/repository/src/repositories/legacy-juggler-bridge';
+import {ensurePromise, juggler} from '@loopback/repository/src/repositories/legacy-juggler-bridge';
 import {InclusionResolver} from '@loopback/repository/src/relations/relation.types';
 import {AnyObject, Command, Count, NamedParameters, PositionalParameters} from '@loopback/repository/src/common-types';
 import {OwnedEntity} from '../../models/abstract/owned-entity';
@@ -43,6 +43,12 @@ export abstract class OwnedCrudRepository<T extends OwnedEntity, ID, Relations e
   async find(filter?: Filter<T>, options?: Options): Promise<(T & Relations)[]> {
     const ownerFilter = this.applyOwnerToFilter(filter);
     return this.proxy.find(ownerFilter, options);
+  }
+
+  async findOne(filter?: Filter<T>, options?: Options): Promise<(T & Relations) | null> {
+    // @todo review this method
+    const ownerFilter = this.applyOwnerToFilter(filter);
+    return this.proxy.findOne(ownerFilter, options);
   }
 
   update(entity: T, options?: Options): Promise<void> {

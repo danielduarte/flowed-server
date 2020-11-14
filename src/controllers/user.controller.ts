@@ -132,7 +132,7 @@ export class UserController {
   @get('/profile', {
     responses: {
       '200': {
-        description: 'User Profile',
+        description: 'User profile',
         content: {
           'application/json': {
             schema: {

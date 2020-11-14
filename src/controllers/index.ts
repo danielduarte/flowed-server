@@ -5,3 +5,4 @@ export * from './flow-version.controller';
 export * from './instance-summary.controller';
 export * from './log-entry.controller';
 export * from './user.controller';
+export * from './api-key.controller';
