@@ -4,7 +4,7 @@ import {FlowVersion} from '../models';
 import {OwnedFlowVersionRepository} from '../repositories';
 import {authenticate} from '@loopback/authentication';
 
-@authenticate('jwt')
+@authenticate('jwt', 'apikey')
 export class FlowVersionController {
   constructor(@repository(OwnedFlowVersionRepository) public flowVersionRepository: OwnedFlowVersionRepository) {}
 

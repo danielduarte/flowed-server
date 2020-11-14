@@ -128,7 +128,7 @@ export class UserController {
     return savedUser;
   }
 
-  @authenticate('jwt')
+  @authenticate('jwt', 'apikey')
   @get('/profile', {
     responses: {
       '200': {
@@ -147,7 +147,7 @@ export class UserController {
     return this.userService.findUserById(this.user.id);
   }
 
-  @authenticate('jwt')
+  @authenticate('jwt', 'apikey')
   @patch('/profile', {
     responses: {
       '204': {

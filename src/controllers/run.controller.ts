@@ -5,7 +5,7 @@ import {Flow, Instance} from '../models';
 import {FlowManager, ValueMap} from 'flowed';
 import {authenticate} from '@loopback/authentication';
 
-@authenticate('jwt')
+@authenticate('jwt', 'apikey')
 export class RunController {
   constructor(
     @repository(OwnedFlowRepository) public flowRepository: OwnedFlowRepository,

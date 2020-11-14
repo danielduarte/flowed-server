@@ -7,7 +7,7 @@ import {FlowedServerApplication} from '../application';
 import {OutgoingMessageType} from '../types';
 import {authenticate} from '@loopback/authentication';
 
-@authenticate('jwt')
+@authenticate('jwt', 'apikey')
 export class FlowController {
   constructor(
     @repository(OwnedFlowRepository) protected flowRepository: OwnedFlowRepository,

@@ -9,10 +9,13 @@ import {MySequence} from './sequence';
 import {createWebsocketServer} from './sync-service';
 import WS from 'ws';
 import {OutgoingMessage} from './types';
-import {AuthenticationComponent} from '@loopback/authentication';
+import {AuthenticationComponent, registerAuthenticationStrategy} from '@loopback/authentication';
 import {JWTAuthenticationComponent, UserServiceBindings} from '@loopback/authentication-jwt';
 import {DbDataSource} from './datasources';
 import {TokenServiceBindings} from '@loopback/authentication-jwt';
+import {ApikeyAuthenticationStrategy} from './apikey-authentication/apikey-authentication-strategy';
+import {createBindingFromClass} from '@loopback/core';
+import {ApikeySpecEnhancer} from './apikey-authentication/apikey.spec.enhancer';
 
 export {ApplicationConfig};
 
@@ -48,15 +51,18 @@ export class FlowedServerApplication extends BootMixin(ServiceMixin(RepositoryMi
         nested: true,
       },
     };
-    // Mount authentication system with jwt strategy
+
+    // Mount authentication system with jwt and API ket strategies
     this.component(AuthenticationComponent);
     this.component(JWTAuthenticationComponent);
-    this.setupSecurity();
+    this.setupJwtSecurity();
+    registerAuthenticationStrategy(this, ApikeyAuthenticationStrategy);
+    this.add(createBindingFromClass(ApikeySpecEnhancer));
 
     this.dataSource(DbDataSource, UserServiceBindings.DATASOURCE_NAME);
   }
 
-  setupSecurity() {
+  setupJwtSecurity() {
     if (process.env.TOKEN_SECRET) {
       this.bind(TokenServiceBindings.TOKEN_SECRET).to(process.env.TOKEN_SECRET);
     }

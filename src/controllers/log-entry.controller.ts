@@ -4,7 +4,7 @@ import {LogEntry} from '../models';
 import {OwnedInstanceRepository, OwnedLogEntryRepository} from '../repositories';
 import {authenticate} from '@loopback/authentication';
 
-@authenticate('jwt')
+@authenticate('jwt', 'apikey')
 export class LogEntryController {
   constructor(
     @repository(OwnedLogEntryRepository) public logEntryRepository: OwnedLogEntryRepository,

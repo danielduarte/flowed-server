@@ -4,7 +4,7 @@ import {ApiKey} from '../models';
 import {OwnedApiKeyRepository} from '../repositories';
 import {authenticate} from '@loopback/authentication';
 
-@authenticate('jwt')
+@authenticate('jwt', 'apikey')
 export class ApiKeyController {
   constructor(
     @repository(OwnedApiKeyRepository) public apiKeyRepository: OwnedApiKeyRepository,

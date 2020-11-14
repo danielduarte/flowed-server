@@ -4,7 +4,7 @@ import {InstanceSummary} from '../models';
 import {OwnedInstanceSummaryRepository} from '../repositories';
 import {authenticate} from '@loopback/authentication';
 
-@authenticate('jwt')
+@authenticate('jwt', 'apikey')
 export class InstanceSummaryController {
   constructor(
     @repository(OwnedInstanceSummaryRepository) public instanceSummaryRepository: OwnedInstanceSummaryRepository,
