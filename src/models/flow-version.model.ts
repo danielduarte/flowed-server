@@ -49,11 +49,18 @@ export class FlowVersion extends OwnedEntity {
   })
   status: string;
 
+  // @todo deprecated field
   @property({
     type: 'object',
     required: true,
   })
   spec: object;
+
+  @property({
+    type: 'string',
+    required: true,
+  })
+  specStr: string;
 
   @property({
     type: 'string',

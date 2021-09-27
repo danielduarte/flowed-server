@@ -25,7 +25,8 @@ export class FlowRepository extends DefaultCrudRepository<T, ID, Relations> {
     if (typeof flow.activeVersion !== 'undefined') {
       debug(`Flow with id '${flow.id}' does not have an active version.`);
       const version = await this.flowVersionRepository.findById(flow.activeVersion);
-      flow.spec = version.spec;
+      flow.specStr = version.specStr ? version.specStr : JSON.stringify(version.spec, null, 2);
+      flow.spec = JSON.parse(flow.specStr); // @todo field 'spec' to be removed
     }
 
     return flow;
@@ -56,7 +57,11 @@ export class FlowRepository extends DefaultCrudRepository<T, ID, Relations> {
 
     if (options?.reuseVersionIfEquivalent && data.activeVersion) {
       const currentVersion = await this.flowVersionRepository.findById(data.activeVersion);
-      const equivalentVersions = JSON.stringify(currentVersion.spec) === JSON.stringify(data.spec);
+
+      const currentVersionSpec = currentVersion.specStr ? currentVersion.specStr : JSON.stringify(currentVersion.spec);
+      const versionSpec = data.specStr ? data.specStr : JSON.stringify(data.spec);
+
+      const equivalentVersions = currentVersionSpec === versionSpec;
       if (equivalentVersions) {
         createVersion = false;
         finalVersion = currentVersion;
@@ -67,7 +72,8 @@ export class FlowRepository extends DefaultCrudRepository<T, ID, Relations> {
       // Create version
       const newVersion = await this.flowVersionRepository.create(
         new FlowVersion({
-          spec: data.spec ?? {},
+          spec: data.specStr ? JSON.parse(data.specStr) : (data.spec ? data.spec : {}), // @todo deprecated field
+          specStr: data.specStr,
           flowId: data.id,
           ownerId: data.ownerId,
         }),
@@ -83,7 +89,8 @@ export class FlowRepository extends DefaultCrudRepository<T, ID, Relations> {
     }
 
     // Remove spec from flow
-    delete data.spec;
+    delete data.spec; // @todo deprecated field
+    delete data.specStr;
 
     return finalVersion as FlowVersion;
   }

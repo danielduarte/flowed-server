@@ -51,7 +51,7 @@ export class RunController {
 
     try {
       const results = await FlowManager.run(
-        flow.spec ?? {},
+        flow.specStr ? JSON.parse(flow.specStr) : (flow.spec ? flow.spec : {}),
         executionParams.params,
         executionParams.expectedResults,
         undefined,

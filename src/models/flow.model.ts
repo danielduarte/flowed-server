@@ -54,10 +54,16 @@ export class Flow extends OwnedEntity {
   })
   activeVersion: string;
 
+  // @todo deprecated field
   @property({
     type: 'object',
   })
   spec?: object;
+
+  @property({
+    type: 'string',
+  })
+  specStr?: string;
 
   constructor(data?: Partial<Flow>) {
     super(data);
