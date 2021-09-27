@@ -1,7 +1,7 @@
 import {inject} from '@loopback/core';
 import {TokenServiceBindings, MyUserService, UserServiceBindings, UserRepository} from '@loopback/authentication-jwt';
 import {TokenService, authenticate} from '@loopback/authentication';
-import {SecurityBindings, UserProfile} from '@loopback/security';
+import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
 import {repository, model, property} from '@loopback/repository';
 import {Credentials, User} from '@loopback/authentication-jwt';
 import {get, patch, post, requestBody, getModelSchemaRef, SchemaObject} from '@loopback/rest';
@@ -144,7 +144,8 @@ export class UserController {
     },
   })
   async getProfile(): Promise<User> {
-    return this.userService.findUserById(this.user.id);
+    const userId = this.user[securityId];
+    return this.userService.findUserById(userId);
   }
 
   @authenticate('jwt', 'apikey')
@@ -165,16 +166,18 @@ export class UserController {
     })
     profile: User,
   ): Promise<void> {
+    const userId = this.user[securityId];
+
     // Save user profile
     const profileInfo = _.omit(profile, 'password');
     if (!_.isEmpty(profileInfo)) {
-      await this.userRepository.updateById(this.user.id, profileInfo);
+      await this.userRepository.updateById(userId, profileInfo);
     }
 
     // Save password
     if (profile.password) {
       const password = await hash(profile.password, await genSalt());
-      await this.userRepository.userCredentials(this.user.id).patch({password});
+      await this.userRepository.userCredentials(userId).patch({password});
     }
   }
 }
