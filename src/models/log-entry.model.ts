@@ -6,7 +6,6 @@ export class LogEntry extends OwnedEntity {
   @property({
     type: 'string',
     id: true,
-    generated: true,
     defaultFn: 'uuidv4',
   })
   id?: string;

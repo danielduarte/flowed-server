@@ -4,12 +4,15 @@ import {OwnedFlowRepository, OwnedInstanceRepository} from '../repositories';
 import {Flow, Instance} from '../models';
 import {FlowManager, ValueMap} from 'flowed';
 import {authenticate} from '@loopback/authentication';
+import {SecurityBindings, UserProfile, securityId} from '@loopback/security';
+import {inject} from '@loopback/core';
 
 @authenticate('jwt', 'apikey')
 export class RunController {
   constructor(
     @repository(OwnedFlowRepository) public flowRepository: OwnedFlowRepository,
     @repository(OwnedInstanceRepository) public instanceRepository: OwnedInstanceRepository,
+    @inject(SecurityBindings.USER) protected owner: UserProfile,
   ) {}
 
   @post('/start/{id}', {
@@ -53,7 +56,10 @@ export class RunController {
         executionParams.expectedResults,
         undefined,
         undefined,
-        {instanceId: newInstance.id},
+        {
+          instanceId: newInstance.id,
+          logFields: { ownerId: this.owner[securityId] },
+        },
       );
 
       await this.instanceRepository.updateById(newInstance.id, {

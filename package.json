@@ -55,7 +55,7 @@
     "@loopback/service-proxy": "^3.0.3",
     "cfenv": "^1.2.3",
     "dotenv": "^8.2.0",
-    "flowed": "^1.12.2",
+    "flowed": "^1.13.0",
     "flowed-openapi": "^0.1.4",
     "loopback-connector-mongodb": "^5.4.0",
     "source-map-support": "^0.5.19",

@@ -25,12 +25,12 @@ export class LogEntryController {
         'application/json': {
           schema: getModelSchemaRef(LogEntry, {
             title: 'NewLogEntry',
-            exclude: ['id'],
+            exclude: ['id', 'ownerId'],
           }),
         },
       },
     })
-    logEntry: Omit<LogEntry, 'id'>,
+    logEntry: Omit<LogEntry, 'id' | 'ownerId'>,
   ): Promise<LogEntry> {
     if (typeof logEntry.objectId === 'string') {
       try {
@@ -50,6 +50,12 @@ export class LogEntryController {
       }
     }
 
-    return this.logEntryRepository.create(logEntry);
+    let l = new LogEntry(logEntry);
+    try {
+      l = await this.logEntryRepository.create(logEntry);
+    } catch (e) {
+      console.error(e);
+    }
+    return l;
   }
 }
